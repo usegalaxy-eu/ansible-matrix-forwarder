@@ -1,17 +1,19 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+Role that installs [Hector J. Smith's](https://gitlab.com/hectorjsmith) Grafana-Matrix-Forwarder. Compiled with go from source and started with Systemd.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Your host needs systemd.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Most variables are self-explaining, or meanings can be found in the [repo](https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/tree/main/).
+Please make sure that your `matrix_forwarder_password` goes to an ansible-vault.  
+`matrix_forwarder_user` is the system-user, wheras `matrix_forwarder_user` is the matrix username.
 
 Dependencies
 ------------
@@ -25,14 +27,17 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: servers
       roles:
-         - { role: username.rolename, x: 42 }
+         - name: usegalaxy_eu.grafana_matrix_forwarder
+           vars:
+             - matrix_forwarder_user: galaxy
+             - matrix_forwarder_group: galaxy
 
 License
 -------
 
-BSD
+MIT
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+[Mira Kuntz](github.com/mira-miracoli)
