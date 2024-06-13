@@ -44,6 +44,7 @@
     daemon_reload: true
 
 - name: Enable service
+  become: true
   ansible.builtin.systemd:
     name: matrix-forwarder
     enabled: true
