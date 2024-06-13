@@ -39,10 +39,12 @@
   notify: daemon reload
 
 - name: Daemon reload
+  become: true
   ansible.builtin.systemd:
     daemon_reload: true
 
 - name: Enable service
+  become: true
   ansible.builtin.systemd:
     name: matrix-forwarder
     enabled: true
