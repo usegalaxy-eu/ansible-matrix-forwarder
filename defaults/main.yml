@@ -1,5 +1,13 @@
 ---
 # defaults file for grafana-matrix-forwarder
+matrix_forwarder_version: main  # a branch, or a release from https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/releases
+# beware that version tags do not always match the download URL (see examples below)
+#   - Version `v0.8.2`: Link https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/archive/v0.8.2/grafana-matrix-forwarder-v0.8.2.zip
+#   - Version `v0.6.0`: Link https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/archive/0.6.0/grafana-matrix-forwarder-0.6.0.zip
+# this role uses `matrix_forwarder_version` to construct the download link,
+# therefore a string matching the download link should be chosen rather than
+# the version tag
+
 matrix_forwarder_user: centos
 matrix_forwarder_group: centos
 
