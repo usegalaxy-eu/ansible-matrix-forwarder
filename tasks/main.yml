@@ -19,13 +19,13 @@
 
 - name: Get files
   ansible.builtin.unarchive:
-    src: https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/archive/main/grafana-matrix-forwarder-main.zip
+    src: https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/archive/{{ matrix_forwarder_version }}/grafana-matrix-forwarder-{{ matrix_forwarder_version }}.zip
     dest: "{{ matrix_forwarder_dir }}"
     remote_src: yes
 
 - name: Compile the app from src
   ansible.builtin.command:
-    chdir: "{{ matrix_forwarder_dir }}/grafana-matrix-forwarder-main/src"
+    chdir: "{{ matrix_forwarder_dir }}/grafana-matrix-forwarder-{{ matrix_forwarder_version }}/src"
     cmd: go build app.go
 
 - name: C""
