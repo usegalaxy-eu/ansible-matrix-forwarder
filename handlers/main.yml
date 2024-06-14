@@ -1,6 +1,0 @@
----
-# handlers file for grafana-matrix-forwarder
-- name: Daemon reload
-  ansible.builtin.systemd:
-    daemon_reload: true
-  become: yes  

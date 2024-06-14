@@ -1,5 +1,4 @@
 ---
-# defaults file for grafana-matrix-forwarder
 matrix_forwarder_version: main  # a branch, or a release from https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/releases
 # beware that version tags do not always match the download URL (see examples below)
 #   - Version `v0.8.2`: Link https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/archive/v0.8.2/grafana-matrix-forwarder-v0.8.2.zip
@@ -8,11 +7,18 @@ matrix_forwarder_version: main  # a branch, or a release from https://gitlab.com
 # therefore a string matching the download link should be chosen rather than
 # the version tag
 
-matrix_forwarder_user: centos
-matrix_forwarder_group: centos
+# Path of the Grafana Matrix Forwarder binary
+matrix_forwarder_path: /usr/local/bin/grafana-matrix-forwarder
 
-matrix_forwarder_dir: "/home/{{ matrix_forwarder_user }}/grafana-matrix-forwarder"
+# Owner, group, mode of the Grafana Matrix Forwarder binary
+# matrix_forwarder_owner: omit
+# matrix_forwarder_group: omit
+matrix_forwarder_mode: "0755"
 
+# Systemd service unit
+matrix_forwarder_systemd_user: root
+matrix_forwarder_systemd_group: root 
+# application configuration (parameters in systemd unit)
 matrix_forwarder_homeserver: https://matrix-client.matrix.org
 matrix_forwarder_username: "@exampleuser:matrix.org"
 matrix_forwarder_password: I_go_to_VAULT!

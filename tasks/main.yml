@@ -1,35 +1,104 @@
 ---
-# tasks file for grafana-matrix-forwarder
-- name: Install GO
+- name: Ensure Go and zip are installed.
   ansible.builtin.package:
     name:
       - go
       - zip
     state: present
-  become: yes
+  become: true
 
-- name: Create folder
-  ansible.builtin.file:
-    path: "{{ matrix_forwarder_dir }}"
-    state: directory
-    owner: "{{ matrix_forwarder_user }}"
-    group: "{{ matrix_forwarder_group }}"
-    mode: "0775"
-  become: yes
+- name: Compile and install the application.
+  block:
+    - name: Allocate a temporary directory to compile the application.
+      ansible.builtin.tempfile:
+        prefix: ansible.usegalaxy-eu.grafana_matrix_forwarder.
+        state: directory
+      changed_when: false
+      register: __grafana_matrix_forwarder_tempdir
 
-- name: Get files
-  ansible.builtin.unarchive:
-    src: https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/archive/{{ matrix_forwarder_version }}/grafana-matrix-forwarder-{{ matrix_forwarder_version }}.zip
-    dest: "{{ matrix_forwarder_dir }}"
-    remote_src: yes
+    - name: Download and extract source code.
+      ansible.builtin.unarchive:
+        remote_src: true
+        src: "https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/archive/{{ matrix_forwarder_version }}/grafana-matrix-forwarder-{{ matrix_forwarder_version }}.zip"
+        dest: "{{ __grafana_matrix_forwarder_tempdir.path }}"
+      changed_when: false
 
-- name: Compile the app from src
-  ansible.builtin.command:
-    chdir: "{{ matrix_forwarder_dir }}/grafana-matrix-forwarder-{{ matrix_forwarder_version }}/src"
-    cmd: go build app.go
-  changed_when: true
+    - name: Define compilation directory.
+      block:
+        - name: Assume the compiler should be run on the root directory of the archive.
+          ansible.builtin.set_fact:
+            __grafana_matrix_forwarder_compilation_directory: "{{ __grafana_matrix_forwarder_tempdir.path }}/grafana-matrix-forwarder-{{ matrix_forwarder_version }}"
 
-- name: C""
+        - name: Check if the "src" subdirectory exists.
+          ansible.builtin.stat:
+            path: "{{ __grafana_matrix_forwarder_compilation_directory }}/src"
+          register: __grafana_matrix_forwarder_src_dir_stat
+
+        - name: Build in the "src" subdirectory if it exists.
+          ansible.builtin.set_fact:
+            __grafana_matrix_forwarder_compilation_directory: "{{ __grafana_matrix_forwarder_compilation_directory }}/src"
+          when: __grafana_matrix_forwarder_src_dir_stat.stat.exists
+
+    - name: Compile the application from source.
+      ansible.builtin.command:
+        chdir: "{{ __grafana_matrix_forwarder_compilation_directory }}"
+        cmd: go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" app.go
+        # the arguments `-trimpath -buildvcs=false -ldflags="-s -w -buildid="`
+        # make the build deterministic
+      changed_when: false
+
+    - name: Check whether a binary exists in the configured path.
+      ansible.builtin.stat:
+        path: "{{ matrix_forwarder_path }}"
+      register: __grafana_matrix_forwarder_path_exists
+
+    - name: Compare the sha256sums of the installed binary and the compiled one.
+      when: __grafana_matrix_forwarder_path_exists.stat.exists
+      block: 
+      - name: Compute sha256sum of the existing binary.
+        ansible.builtin.shell:
+          executable: /bin/bash
+          cmd: |
+            set -o pipefail
+            sha256sum {{ matrix_forwarder_path }}  | cut -d ' ' -f 1
+        register: __grafana_matrix_forwarder_sha256sum_installed
+        changed_when: false
+
+      - name: Compute sha256sum of the compiled binary.
+        ansible.builtin.shell:
+          executable: /bin/bash
+          cmd: |
+            set -o pipefail
+            sha256sum {{ __grafana_matrix_forwarder_compilation_directory }}/app | cut -d ' ' -f 1
+        register: __grafana_matrix_forwarder_sha256sum_compiled
+        changed_when: false      
+
+      - name: Compare sha256sums.
+        ansible.builtin.set_fact:
+          __grafana_matrix_forwarder_install: "{{ __grafana_matrix_forwarder_sha256sum_installed.stdout != __grafana_matrix_forwarder_sha256sum_compiled.stdout }}"
+
+    - name: Install the application binary.
+      become: true
+      ansible.builtin.copy:
+        remote_src: true
+        src: "{{ __grafana_matrix_forwarder_compilation_directory }}/app"
+        dest: "{{ matrix_forwarder_path }}"
+        owner: "{{ matrix_forwarder_owner | default(omit) }}"
+        group: "{{ matrix_forwarder_group | default(omit) }}"
+        mode: "{{ matrix_forwarder_mode | default('0755') }}"
+      when: __grafana_matrix_forwarder_install | default(true)
+      # install the binary only when the two sha256sums differ (and therefore,
+      # report no changes when the complied binary is identical)
+
+  always:
+    - name: Clean up the temporary directory.
+      ansible.builtin.file:
+        path: "{{ __grafana_matrix_forwarder_tempdir.path }}"
+        state: absent
+      when: __grafana_matrix_forwarder_tempdir is defined
+      changed_when: false
+
+- name: Install systemd unit file
   ansible.builtin.template:
     src: matrix-forwarder.service.j2
     dest: /etc/systemd/system/matrix-forwarder.service
@@ -37,7 +106,6 @@
     owner: root
     group: root
   become: yes
-  notify: Daemon reload
 
 - name: Daemon reload
   become: true
