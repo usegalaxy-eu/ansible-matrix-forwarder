@@ -114,6 +114,12 @@
 
 - name: Enable service
   become: true
+  tags: molecule-idempotence-notest
+  # The test runs with invalid credentials, so the service fails as soon as it
+  # starts. When the idempotence test runs, it fails because the service needs
+  # to be started again. Adding this tag makes Molecule ignore this task.
+  # See https://ansible.readthedocs.io/projects/molecule/configuration/#ansible
+  # for more information.
   ansible.builtin.systemd:
     name: matrix-forwarder
     enabled: true
