@@ -22,5 +22,4 @@ jobs:
         uses: ibiqlik/action-yamllint@v3
 
       - name: Run ansible-lint
-        # replace `main` with any valid ref, or tags like `v6`
-        uses: ansible-community/ansible-lint-action@main
+        uses: ansible/ansible-lint@v24
