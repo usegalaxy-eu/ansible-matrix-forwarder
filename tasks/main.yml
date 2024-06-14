@@ -19,7 +19,7 @@
     - name: Download and extract source code.
       ansible.builtin.unarchive:
         remote_src: true
-        src: "https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/archive/{{ matrix_forwarder_version }}/grafana-matrix-forwarder-{{ matrix_forwarder_version }}.zip"
+        src: "https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/archive/{{ grafana_matrix_forwarder_version }}/grafana-matrix-forwarder-{{ grafana_matrix_forwarder_version }}.zip"
         dest: "{{ __grafana_matrix_forwarder_tempdir.path }}"
       changed_when: false
 
@@ -27,7 +27,7 @@
       block:
         - name: Assume the compiler should be run on the root directory of the archive.
           ansible.builtin.set_fact:
-            __grafana_matrix_forwarder_compilation_directory: "{{ __grafana_matrix_forwarder_tempdir.path }}/grafana-matrix-forwarder-{{ matrix_forwarder_version }}"
+            __grafana_matrix_forwarder_compilation_directory: "{{ __grafana_matrix_forwarder_tempdir.path }}/grafana-matrix-forwarder-{{ grafana_matrix_forwarder_version }}"
 
         - name: Check if the "src" subdirectory exists.
           ansible.builtin.stat:
@@ -49,7 +49,7 @@
 
     - name: Check whether a binary exists in the configured path.
       ansible.builtin.stat:
-        path: "{{ matrix_forwarder_path }}"
+        path: "{{ grafana_matrix_forwarder_path }}"
       register: __grafana_matrix_forwarder_path_exists
 
     - name: Compare the sha256sums of the installed binary and the compiled one.
@@ -60,7 +60,7 @@
           executable: /bin/bash
           cmd: |
             set -o pipefail
-            sha256sum {{ matrix_forwarder_path }}  | cut -d ' ' -f 1
+            sha256sum {{ grafana_matrix_forwarder_path }}  | cut -d ' ' -f 1
         register: __grafana_matrix_forwarder_sha256sum_installed
         changed_when: false
 
@@ -82,10 +82,10 @@
       ansible.builtin.copy:
         remote_src: true
         src: "{{ __grafana_matrix_forwarder_compilation_directory }}/app"
-        dest: "{{ matrix_forwarder_path }}"
-        owner: "{{ matrix_forwarder_owner | default(omit) }}"
-        group: "{{ matrix_forwarder_group | default(omit) }}"
-        mode: "{{ matrix_forwarder_mode | default('0755') }}"
+        dest: "{{ grafana_matrix_forwarder_path }}"
+        owner: "{{ grafana_matrix_forwarder_owner | default(omit) }}"
+        group: "{{ grafana_matrix_forwarder_group | default(omit) }}"
+        mode: "{{ grafana_matrix_forwarder_mode | default('0755') }}"
       when: __grafana_matrix_forwarder_install | default(true)
       # install the binary only when the two sha256sums differ (and therefore,
       # report no changes when the complied binary is identical)
