@@ -12,8 +12,8 @@ Role Variables
 --------------
 
 Most variables are self-explaining, or meanings can be found in the [repo](https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/tree/main/).
-Please make sure that your `matrix_forwarder_password` goes to an ansible-vault.  
-`matrix_forwarder_systemd_user` is the system-user, wheras `matrix_forwarder_username` is the matrix username.
+Please make sure that your `grafana_matrix_forwarder_password` goes to an ansible-vault.  
+`grafana_matrix_forwarder_systemd_user` is the system-user, wheras `grafana_matrix_forwarder_username` is the matrix username.
 
 Dependencies
 ------------
@@ -29,8 +29,8 @@ Including an example of how to use your role (for instance, with variables passe
       roles:
          - name: usegalaxy_eu.grafana_matrix_forwarder
            vars:
-             - matrix_forwarder_systemd_user: galaxy
-             - matrix_forwarder_systemd_group: galaxy
+             - grafana_matrix_forwarder_systemd_user: galaxy
+             - grafana_matrix_forwarder_systemd_group: galaxy
 
 License
 -------

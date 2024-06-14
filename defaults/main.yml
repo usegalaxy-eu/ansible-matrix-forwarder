@@ -1,5 +1,5 @@
 ---
-matrix_forwarder_version: main  # a branch, or a release from https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/releases
+grafana_matrix_forwarder_version: main  # a branch, or a release from https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/releases
 # beware that version tags do not always match the download URL (see examples below)
 #   - Version `v0.8.2`: Link https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/archive/v0.8.2/grafana-matrix-forwarder-v0.8.2.zip
 #   - Version `v0.6.0`: Link https://gitlab.com/hectorjsmith/grafana-matrix-forwarder/-/archive/0.6.0/grafana-matrix-forwarder-0.6.0.zip
@@ -8,21 +8,21 @@ matrix_forwarder_version: main  # a branch, or a release from https://gitlab.com
 # the version tag
 
 # Path of the Grafana Matrix Forwarder binary
-matrix_forwarder_path: /usr/local/bin/grafana-matrix-forwarder
+grafana_matrix_forwarder_path: /usr/local/bin/grafana-matrix-forwarder
 
 # Owner, group, mode of the Grafana Matrix Forwarder binary
 # matrix_forwarder_owner: omit
 # matrix_forwarder_group: omit
-matrix_forwarder_mode: "0755"
+grafana_matrix_forwarder_mode: "0755"
 
 # Systemd service unit
-matrix_forwarder_systemd_user: root
-matrix_forwarder_systemd_group: root 
+grafana_matrix_forwarder_systemd_user: root
+grafana_matrix_forwarder_systemd_group: root 
 # application configuration (parameters in systemd unit)
-matrix_forwarder_homeserver: https://matrix-client.matrix.org
-matrix_forwarder_username: "@exampleuser:matrix.org"
-matrix_forwarder_password: I_go_to_VAULT!
-matrix_forwarder_port: 6000
-matrix_forwarder_metric_rounding: 1
-matrix_forwarder_resolve_mode: message # choose from 'message', 'reaction' and 'reply'
-matrix_forwarder_host: 0.0.0.0
+grafana_matrix_forwarder_homeserver: https://matrix-client.matrix.org
+grafana_matrix_forwarder_username: "@exampleuser:matrix.org"
+grafana_matrix_forwarder_password: I_go_to_VAULT!
+grafana_matrix_forwarder_port: 6000
+grafana_matrix_forwarder_metric_rounding: 1
+grafana_matrix_forwarder_resolve_mode: message # choose from 'message', 'reaction' and 'reply'
+grafana_matrix_forwarder_host: 0.0.0.0

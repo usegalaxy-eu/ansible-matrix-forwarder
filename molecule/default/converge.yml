@@ -7,7 +7,7 @@
       ansible.builtin.include_role:
         name: "usegalaxy_eu.grafana_matrix_forwarder"
       vars:
-        matrix_forwarder_systemd_user: root
-        matrix_forwarder_systemd_group: root
-        # matrix_forwarder_version: "v0.8.2"  # (compiles on the root of the archive)
-        matrix_forwarder_version: "0.6.0"  # (compiles on the "src" subdirectory)
+        grafana_matrix_forwarder_systemd_user: root
+        grafana_matrix_forwarder_systemd_group: root
+        # grafana_matrix_forwarder_version: "v0.8.2"  # (compiles on the root of the archive)
+        grafana_matrix_forwarder_version: "0.6.0"  # (compiles on the "src" subdirectory)
